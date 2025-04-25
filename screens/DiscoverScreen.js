@@ -63,7 +63,7 @@ const DiscoverScreen = ({ navigation }) => {
                     renderItem={({ item }) => (
                         <TouchableOpacity 
                             style={styles.card}
-                            onPress={() => navigation.navigate('MealDetail', { meal: item })}
+                            onPress={() => navigation.navigate('MealDetail', { meal: item })} // Ensure correct navigation
                         >
                             <Image 
                                 source={{ uri: item.strMealThumb }} 

@@ -9,6 +9,7 @@ import { View, ActivityIndicator, Platform } from 'react-native';
 import DiscoverScreen from '../screens/DiscoverScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
+import SearchScreen from '../screens/SearchScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
 import { AuthContext } from '../hooks/useAuth';
 
@@ -32,6 +33,52 @@ const defaultStackOptions = {
   headerTintColor: '#ff6b6b',
 };
 
+const DiscoverStack = createNativeStackNavigator();
+const SearchStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
+
+function DiscoverStackScreen() {
+  return (
+    <DiscoverStack.Navigator
+      screenOptions={{
+        ...defaultStackOptions,
+        headerBackTitle: 'Discover', // Set back button label
+      }}
+    >
+      <DiscoverStack.Screen name="DiscoverMain" component={DiscoverScreen} options={{ headerShown: false }} />
+      <DiscoverStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
+    </DiscoverStack.Navigator>
+  );
+}
+
+function SearchStackScreen() {
+  return (
+    <SearchStack.Navigator
+      screenOptions={{
+        ...defaultStackOptions,
+        headerBackTitle: 'Search', // Set back button label
+      }}
+    >
+      <SearchStack.Screen name="SearchMain" component={SearchScreen} options={{ headerShown: false }} />
+      <SearchStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
+    </SearchStack.Navigator>
+  );
+}
+
+function ProfileStackScreen() {
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{
+        ...defaultStackOptions,
+        headerBackTitle: 'Profile', // Set back button label
+      }}
+    >
+      <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
+    </ProfileStack.Navigator>
+  );
+}
+
 export default function MainNavigator() {
   const { user } = useContext(AuthContext);
 
@@ -51,6 +98,8 @@ export default function MainNavigator() {
             tabBarIcon: ({ color }) => {
               if (route.name === 'Discover') {
                 return <Feather name="compass" size={24} color={color} />;
+              } else if (route.name === 'Search') {
+                return <Feather name="search" size={24} color={color} />;
               } else if (route.name === 'Profile') {
                 return <Feather name="user" size={24} color={color} />;
               }
@@ -78,8 +127,9 @@ export default function MainNavigator() {
             },
           })}
         >
-          <Tab.Screen name="Discover" component={DiscoverScreen} options={{ headerShown: false }} />
-          <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Discover" component={DiscoverStackScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Search" component={SearchStackScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Profile" component={ProfileStackScreen} options={{ headerShown: false }} />
         </Tab.Navigator>
       ) : (
         <Stack.Navigator screenOptions={defaultStackOptions}>

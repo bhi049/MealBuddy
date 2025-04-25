@@ -34,7 +34,7 @@ const ProfileScreen = ({ navigation }) => {
           renderItem={({ item }) => (
             <TouchableOpacity 
               style={styles.recipeCard}
-              onPress={() => navigation.navigate('MealDetail', { meal: item })}
+              onPress={() => navigation.navigate('MealDetail', { meal: item })} // Ensure correct navigation
             >
               <Image 
                 source={{ uri: item.strMealThumb }} 
