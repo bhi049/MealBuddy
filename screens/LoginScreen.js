@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#2d3436',
+    color: '#ff6b6b',
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   authButton: {
     width: '100%',
-    backgroundColor: 'red',
+    backgroundColor: '#ff6b6b',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   switchText: {
     fontSize: 14,
-    color: 'red',
+    color: '#ff6b6b',
     fontWeight: '500',
     textAlign: 'center',
   },
