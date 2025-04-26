@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { decode } from 'base64-arraybuffer';
 import { supabase } from '../supabase';
+import { useTheme } from '../hooks/useTheme';
+import { themes } from '../constants/theme';
 
 const EditProfileScreen = ({ navigation }) => {
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -12,6 +15,9 @@ const EditProfileScreen = ({ navigation }) => {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [userId, setUserId] = useState(null);
+
+  const { theme, toggleTheme } = useTheme();
+  const currentTheme = themes[theme];
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -95,34 +101,41 @@ const EditProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <TouchableOpacity style={styles.toggleButton} onPress={toggleTheme}>
+        <Feather name="moon" size={24} color={currentTheme.accent} />
+      </TouchableOpacity>
+
       <TouchableOpacity onPress={pickImage} disabled={uploading}>
         {avatarUrl ? (
           <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Feather name="camera" size={28} color="#ff6b6b" />
-            <Text style={styles.avatarPlaceholderText}>Add Photo</Text>
+          <View style={[styles.avatarPlaceholder, { backgroundColor: currentTheme.inputBackground }]}>
+            <Feather name="camera" size={28} color={currentTheme.accent} />
+            <Text style={[styles.avatarPlaceholderText, { color: currentTheme.accent }]}>Add Photo</Text>
           </View>
         )}
       </TouchableOpacity>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { color: currentTheme.text, borderBottomColor: currentTheme.subtext }]}
         placeholder="Full Name"
+        placeholderTextColor={currentTheme.subtext}
         value={fullName}
         onChangeText={setFullName}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { color: currentTheme.text, borderBottomColor: currentTheme.subtext }]}
         placeholder="Username"
+        placeholderTextColor={currentTheme.subtext}
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
       <TextInput
-        style={[styles.input, styles.bioInput]}
+        style={[styles.input, styles.bioInput, { color: currentTheme.text, borderBottomColor: currentTheme.subtext }]}
         placeholder="Bio"
+        placeholderTextColor={currentTheme.subtext}
         value={bio}
         onChangeText={setBio}
         multiline
@@ -130,7 +143,7 @@ const EditProfileScreen = ({ navigation }) => {
       />
 
       <TouchableOpacity
-        style={styles.saveButton}
+        style={[styles.saveButton, { backgroundColor: currentTheme.accent }]}
         onPress={updateProfile}
         disabled={saving || uploading}
       >
@@ -144,13 +157,14 @@ const EditProfileScreen = ({ navigation }) => {
   );
 };
 
-import { Feather } from '@expo/vector-icons'; // Lisää Feather icons tähän
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#fff',
+  },
+  toggleButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 20,
   },
   avatar: {
     width: 120,
@@ -163,7 +177,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#ffeaea',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
@@ -171,12 +184,10 @@ const styles = StyleSheet.create({
   },
   avatarPlaceholderText: {
     fontSize: 12,
-    color: '#ff6b6b',
     marginTop: 4,
   },
   input: {
     borderBottomWidth: 1,
-    borderColor: '#ccc',
     marginBottom: 20,
     fontSize: 16,
     paddingVertical: 8,
@@ -187,7 +198,6 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: 12,
-    backgroundColor: '#ff6b6b',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',

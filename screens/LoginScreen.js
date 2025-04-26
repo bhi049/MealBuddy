@@ -1,12 +1,16 @@
-// screens/LoginScreen.js
 import { useState } from "react";
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { supabase } from '../supabase';
+import { useTheme } from '../hooks/useTheme';
+import { themes } from '../constants/theme';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
 
   const handleAuth = async () => {
     try {
@@ -17,14 +21,13 @@ const LoginScreen = ({ navigation }) => {
           options: { emailRedirectTo: null }
         });
         if (signUpError) throw signUpError;
-  
-        // Yritetään kirjautua heti rekisteröitymisen jälkeen
+
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password
         });
         if (signInError) throw signInError;
-  
+
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -38,36 +41,36 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <Image 
         source={require('../assets/MealBuddy-logo 2.png')} 
         style={styles.logo}
         resizeMode="contain"
       />
       <View style={styles.formContainer}>
-        <Text style={styles.title}>{isSignUp ? 'Sign Up' : 'Login'}</Text>
+        <Text style={[styles.title, { color: currentTheme.accent }]}>{isSignUp ? 'Sign Up' : 'Login'}</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: currentTheme.inputBackground, color: currentTheme.text, borderColor: currentTheme.subtext }]}
           placeholder="Email"
+          placeholderTextColor={currentTheme.subtext}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
-          placeholderTextColor="#aaa"
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: currentTheme.inputBackground, color: currentTheme.text, borderColor: currentTheme.subtext }]}
           placeholder="Password"
+          placeholderTextColor={currentTheme.subtext}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholderTextColor="#aaa"
         />
-        <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
+        <TouchableOpacity style={[styles.authButton, { backgroundColor: currentTheme.accent }]} onPress={handleAuth}>
           <Text style={styles.authButtonText}>{isSignUp ? 'Sign Up' : 'Login'}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
-          <Text style={styles.switchText}>
+          <Text style={[styles.switchText, { color: currentTheme.accent }]}>
             {isSignUp ? 'Already have an account? Login' : 'Don\'t have an account? Sign Up'}
           </Text>
         </TouchableOpacity>
@@ -79,7 +82,6 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
     alignItems: 'center',
     paddingVertical: 40,
   },
@@ -91,24 +93,19 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#ff6b6b',
     textAlign: 'center',
     marginBottom: 24,
   },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
-    backgroundColor: '#fff',
     fontSize: 16,
-    color: '#2d3436',
   },
   authButton: {
     width: '100%',
-    backgroundColor: '#ff6b6b',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -121,7 +118,6 @@ const styles = StyleSheet.create({
   },
   switchText: {
     fontSize: 14,
-    color: '#ff6b6b',
     fontWeight: '500',
     textAlign: 'center',
   },

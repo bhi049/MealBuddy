@@ -3,6 +3,8 @@ import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet, Image, K
 import { SavedMealsContext } from '../hooks/useSavedMeals';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../hooks/useTheme';
+import { themes } from '../constants/theme';
 
 const SearchScreen = () => {
   const [query, setQuery] = useState('');
@@ -11,13 +13,15 @@ const SearchScreen = () => {
   const { savedMeals, addMeal, removeMeal } = useContext(SavedMealsContext);
   const navigation = useNavigation();
 
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
+
   useEffect(() => {
     const fetchMeals = async () => {
       if (!query) {
         setMeals([]);
         return;
       }
-
       try {
         const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
         const data = await response.json();
@@ -26,15 +30,14 @@ const SearchScreen = () => {
         console.error('Fetch error:', error);
       }
     };
-
     fetchMeals();
   }, [query]);
 
   const handleSearchSubmit = () => {
     if (query && !recentSearches.includes(query)) {
-      setRecentSearches((prev) => [query, ...prev.slice(0, 4)]); // max 5 muistissa
+      setRecentSearches((prev) => [query, ...prev.slice(0, 4)]);
     }
-    Keyboard.dismiss(); // Piilota näppäimistö enterin jälkeen
+    Keyboard.dismiss();
   };
 
   const isFavorite = (mealId) => {
@@ -51,14 +54,16 @@ const SearchScreen = () => {
 
   const renderMeal = ({ item }) => (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { backgroundColor: currentTheme.surface }]}
       onPress={() => navigation.navigate('MealDetail', { meal: item })}
     >
       <Image source={{ uri: item.strMealThumb }} style={styles.image} />
       <View style={styles.info}>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{item.strMeal}</Text>
-          <Text style={styles.category}>{item.strCategory} • {item.strArea}</Text>
+          <Text style={[styles.title, { color: currentTheme.text }]}>{item.strMeal}</Text>
+          <Text style={[styles.category, { color: currentTheme.subtext }]}>
+            {item.strCategory} • {item.strArea}
+          </Text>
         </View>
         <TouchableOpacity
           style={[
@@ -70,7 +75,7 @@ const SearchScreen = () => {
           <Feather
             name="heart"
             size={20}
-            color={isFavorite(item.idMeal) ? '#fff' : '#ff6b6b'}
+            color={isFavorite(item.idMeal) ? "#fff" : "#ff6b6b"}
           />
         </TouchableOpacity>
       </View>
@@ -78,30 +83,28 @@ const SearchScreen = () => {
   );
 
   const renderRecentSearch = ({ item }) => (
-    <TouchableOpacity style={styles.recentSearchItem} onPress={() => {
-      setQuery(item);
-    }}>
-      <Feather name="clock" size={16} color="#999" style={{ marginRight: 8 }} />
-      <Text style={styles.recentSearchText}>{item}</Text>
+    <TouchableOpacity style={[styles.recentSearchItem, { backgroundColor: currentTheme.surface }]} onPress={() => setQuery(item)}>
+      <Feather name="clock" size={16} color={currentTheme.subtext} style={{ marginRight: 8 }} />
+      <Text style={[styles.recentSearchText, { color: currentTheme.text }]}>{item}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border }]}
         placeholder="Search recipes..."
         value={query}
-        onChangeText={setQuery} // <-- heti kun kirjoitetaan, fetch alkaa
-        onSubmitEditing={handleSearchSubmit} // <-- enterillä tallennetaan recentSearch
+        onChangeText={setQuery}
+        onSubmitEditing={handleSearchSubmit}
         autoCapitalize="none"
-        placeholderTextColor="#aaa"
+        placeholderTextColor={currentTheme.subtext}
         returnKeyType="search"
       />
 
       {query.length === 0 && recentSearches.length > 0 ? (
         <View>
-          <Text style={styles.recentTitle}>Recent Searches</Text>
+          <Text style={[styles.recentTitle, { color: currentTheme.text }]}>Recent Searches</Text>
           <FlatList
             data={recentSearches}
             keyExtractor={(item, index) => `recent_${index}`}
@@ -116,8 +119,8 @@ const SearchScreen = () => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={() => (
             <View style={styles.emptyState}>
-              <Feather name="search" size={48} color="#ccc" />
-              <Text style={styles.emptyText}>No recipes found</Text>
+              <Feather name="search" size={48} color={currentTheme.subtext} />
+              <Text style={[styles.emptyText, { color: currentTheme.subtext }]}>No recipes found</Text>
             </View>
           )}
         />
@@ -129,23 +132,18 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
     padding: 16,
   },
   input: {
     height: 45,
-    borderColor: '#ccc',
     borderWidth: 1,
     paddingHorizontal: 12,
     borderRadius: 8,
-    backgroundColor: '#fff',
     marginBottom: 16,
     fontSize: 16,
-    color: '#2d3436',
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     borderRadius: 16,
     marginBottom: 12,
     overflow: 'hidden',
@@ -176,12 +174,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2d3436',
     marginBottom: 4,
   },
   category: {
     fontSize: 13,
-    color: '#666',
   },
   favoriteButton: {
     padding: 8,
@@ -194,14 +190,12 @@ const styles = StyleSheet.create({
   recentTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2d3436',
     marginBottom: 8,
     marginLeft: 4,
   },
   recentSearchItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     padding: 12,
     marginBottom: 8,
     borderRadius: 12,
@@ -213,7 +207,6 @@ const styles = StyleSheet.create({
   },
   recentSearchText: {
     fontSize: 15,
-    color: '#2d3436',
   },
   emptyState: {
     alignItems: 'center',
@@ -221,7 +214,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#999',
     marginTop: 12,
   },
 });

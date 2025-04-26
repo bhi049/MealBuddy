@@ -8,11 +8,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTheme } from '../hooks/useTheme';
+import { themes } from '../constants/theme';
 
 const MealDetailScreen = ({ route, navigation }) => {
   const { meal } = route.params;
 
-  // Format ingredients and measurements into a clean array
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
+
   const getIngredients = () => {
     const ingredients = [];
     for (let i = 1; i <= 20; i++) {
@@ -30,7 +34,7 @@ const MealDetailScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView style={[styles.container, { backgroundColor: currentTheme.background }]} showsVerticalScrollIndicator={false}>
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: meal.strMealThumb }}
@@ -46,19 +50,19 @@ const MealDetailScreen = ({ route, navigation }) => {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title}>{meal.strMeal}</Text>
+        <Text style={[styles.title, { color: currentTheme.text }]}>{meal.strMeal}</Text>
         <View style={styles.categoryContainer}>
-          <Text style={styles.category}>{meal.strCategory}</Text>
-          <Text style={styles.dot}>•</Text>
-          <Text style={styles.category}>{meal.strArea}</Text>
+          <Text style={[styles.category, { color: currentTheme.subtext }]}>{meal.strCategory}</Text>
+          <Text style={[styles.dot, { color: currentTheme.subtext }]}>•</Text>
+          <Text style={[styles.category, { color: currentTheme.subtext }]}>{meal.strArea}</Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Ingredients</Text>
+          <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>Ingredients</Text>
           {getIngredients().map((item, index) => (
             <View key={index} style={styles.ingredientRow}>
-              <View style={styles.bullet} />
-              <Text style={styles.ingredientText}>
+              <View style={[styles.bullet, { backgroundColor: currentTheme.accent }]} />
+              <Text style={[styles.ingredientText, { color: currentTheme.text }]}>
                 {item.measure} {item.ingredient}
               </Text>
             </View>
@@ -66,12 +70,12 @@ const MealDetailScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Instructions</Text>
+          <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>Instructions</Text>
           {meal.strInstructions.split('\r\n').map((instruction, index) => (
             instruction.trim() && (
               <View key={index} style={styles.instructionRow}>
-                <Text style={styles.stepNumber}>{index + 1}</Text>
-                <Text style={styles.instructionText}>{instruction.trim()}</Text>
+                <Text style={[styles.stepNumber, { color: currentTheme.accent }]}>{index + 1}</Text>
+                <Text style={[styles.instructionText, { color: currentTheme.text }]}>{instruction.trim()}</Text>
               </View>
             )
           ))}
@@ -79,10 +83,10 @@ const MealDetailScreen = ({ route, navigation }) => {
 
         {meal.strYoutube && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Video Tutorial</Text>
-            <TouchableOpacity style={styles.youtubeButton}>
-              <Feather name="youtube" size={20} color="#ff6b6b" />
-              <Text style={styles.youtubeText}>Watch on YouTube</Text>
+            <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>Video Tutorial</Text>
+            <TouchableOpacity style={[styles.youtubeButton, { backgroundColor: currentTheme.surface }]}>
+              <Feather name="youtube" size={20} color={currentTheme.accent} />
+              <Text style={[styles.youtubeText, { color: currentTheme.accent }]}>Watch on YouTube</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -94,7 +98,6 @@ const MealDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   imageContainer: {
     width: '100%',
@@ -123,7 +126,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#2d3436',
     marginBottom: 8,
   },
   categoryContainer: {
@@ -133,12 +135,10 @@ const styles = StyleSheet.create({
   },
   category: {
     fontSize: 16,
-    color: '#666',
     fontWeight: '500',
   },
   dot: {
     fontSize: 16,
-    color: '#666',
     marginHorizontal: 8,
   },
   section: {
@@ -147,7 +147,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#2d3436',
     marginBottom: 16,
   },
   ingredientRow: {
@@ -159,12 +158,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#ff6b6b',
     marginRight: 12,
   },
   ingredientText: {
     fontSize: 16,
-    color: '#2d3436',
     flex: 1,
   },
   instructionRow: {
@@ -175,18 +172,15 @@ const styles = StyleSheet.create({
     width: 24,
     fontSize: 16,
     fontWeight: '600',
-    color: '#ff6b6b',
   },
   instructionText: {
     flex: 1,
     fontSize: 16,
-    color: '#2d3436',
     lineHeight: 24,
   },
   youtubeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff5f5',
     padding: 12,
     borderRadius: 8,
   },
@@ -194,8 +188,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
     fontWeight: '600',
-    color: '#ff6b6b',
   },
 });
 
-export default MealDetailScreen; 
+export default MealDetailScreen;

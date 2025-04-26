@@ -5,10 +5,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import { SavedMealsContext } from '../hooks/useSavedMeals';
 import { AuthContext } from '../hooks/useAuth';
 import { supabase } from '../supabase';
+import { useTheme } from '../hooks/useTheme';
+import { themes } from '../constants/theme';
 
 const ProfileScreen = ({ navigation }) => {
   const { savedMeals, removeMeal } = useContext(SavedMealsContext);
   const { user, logout } = useContext(AuthContext);
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
 
   const [profile, setProfile] = useState({
     full_name: '',
@@ -39,24 +43,24 @@ const ProfileScreen = ({ navigation }) => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.profileCardRow}>
+    <ScrollView style={[styles.container, { backgroundColor: currentTheme.background }]}>
+      <View style={[styles.profileCardRow, { backgroundColor: currentTheme.surface }]}>
         <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
           {profile.avatar_url ? (
             <Image source={{ uri: profile.avatar_url }} style={styles.avatarLarge} />
           ) : (
             <View style={styles.avatarLargePlaceholder}>
-              <Feather name="user" size={40} color="#ff6b6b" />
+              <Feather name="user" size={40} color={currentTheme.accent} />
             </View>
           )}
         </TouchableOpacity>
         <View style={styles.profileInfoContainer}>
-          <Text style={styles.fullName}>{profile.full_name || 'My Kitchen'}</Text>
+          <Text style={[styles.fullName, { color: currentTheme.text }]}>{profile.full_name || 'My Kitchen'}</Text>
           {profile.username ? (
-            <Text style={styles.usernameText}>@{profile.username}</Text>
+            <Text style={[styles.usernameText, { color: currentTheme.subtext }]}>@{profile.username}</Text>
           ) : null}
           {profile.bio ? (
-            <Text style={styles.bioText}>{profile.bio}</Text>
+            <Text style={[styles.bioText, { color: currentTheme.subtext }]}>{profile.bio}</Text>
           ) : null}
           <TouchableOpacity style={styles.editButtonSmall} onPress={() => navigation.navigate('EditProfile')}>
             <Text style={styles.editButtonTextSmall}>Edit Profile</Text>
@@ -64,12 +68,12 @@ const ProfileScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={styles.savedRecipesSection}>
-        <Text style={styles.sectionTitle}>Saved Recipes</Text>
+      <View style={[styles.savedRecipesSection, { backgroundColor: currentTheme.surface }]}>
+        <Text style={[styles.sectionTitle, { color: currentTheme.text }]}>Saved Recipes</Text>
         {savedMeals.length === 0 ? (
           <View style={styles.emptyState}>
-            <Feather name="bookmark" size={48} color="#ccc" />
-            <Text style={styles.emptyText}>No saved recipes yet</Text>
+            <Feather name="bookmark" size={48} color={currentTheme.subtext} />
+            <Text style={[styles.emptyText, { color: currentTheme.subtext }]}>No saved recipes yet</Text>
           </View>
         ) : (
           <FlatList
@@ -77,19 +81,21 @@ const ProfileScreen = ({ navigation }) => {
             keyExtractor={(item) => `profile_${item.idMeal}`}
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={styles.recipeCard}
+                style={[styles.recipeCard, { backgroundColor: currentTheme.surface }]}
                 onPress={() => navigation.navigate('MealDetail', { meal: item })}
               >
                 <Image source={{ uri: item.strMealThumb }} style={styles.recipeImage} />
                 <View style={styles.recipeInfo}>
-                  <Text style={styles.recipeName}>{item.strMeal}</Text>
-                  <Text style={styles.recipeCategory}>{item.strCategory} • {item.strArea}</Text>
+                  <Text style={[styles.recipeName, { color: currentTheme.text }]}>{item.strMeal}</Text>
+                  <Text style={[styles.recipeCategory, { color: currentTheme.subtext }]}>
+                    {item.strCategory} • {item.strArea}
+                  </Text>
                 </View>
                 <TouchableOpacity
                   style={styles.removeButton}
                   onPress={() => removeMeal(item.idMeal)}
                 >
-                  <Feather name="trash-2" size={20} color="#ff6b6b" />
+                  <Feather name="trash-2" size={20} color={currentTheme.accent} />
                 </TouchableOpacity>
               </TouchableOpacity>
             )}
@@ -99,9 +105,9 @@ const ProfileScreen = ({ navigation }) => {
         )}
       </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-        <Feather name="log-out" size={20} color="#ff6b6b" />
-        <Text style={styles.logoutText}>Logout</Text>
+      <TouchableOpacity style={[styles.logoutButton, { backgroundColor: currentTheme.surface }]} onPress={logout}>
+        <Feather name="log-out" size={20} color={currentTheme.accent} />
+        <Text style={[styles.logoutText, { color: currentTheme.accent }]}>Logout</Text>
       </TouchableOpacity>
     </ScrollView>
   );

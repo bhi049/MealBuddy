@@ -13,87 +13,93 @@ import SearchScreen from '../screens/SearchScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import { AuthContext } from '../hooks/useAuth';
+import { useTheme } from '../hooks/useTheme';
+import { themes } from '../constants/theme';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-const defaultStackOptions = {
-  headerStyle: {
-    backgroundColor: '#fff',
-    elevation: 0,
-    shadowOpacity: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f1f1',
-  },
-  headerTitleStyle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#2d3436',
-  },
-  headerBackTitleVisible: false,
-  headerTintColor: '#ff6b6b',
-};
-
 const DiscoverStack = createNativeStackNavigator();
 const SearchStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
-function DiscoverStackScreen() {
-  return (
-    <DiscoverStack.Navigator
-      screenOptions={{
-        ...defaultStackOptions,
-        headerBackTitle: 'Discover', // Set back button label
-      }}
-    >
-      <DiscoverStack.Screen name="DiscoverMain" component={DiscoverScreen} options={{ headerShown: false }} />
-      <DiscoverStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
-    </DiscoverStack.Navigator>
-  );
-}
-
-function SearchStackScreen() {
-  return (
-    <SearchStack.Navigator
-      screenOptions={{
-        ...defaultStackOptions,
-        headerBackTitle: 'Search', // Set back button label
-      }}
-    >
-      <SearchStack.Screen name="SearchMain" component={SearchScreen} options={{ headerShown: false }} />
-      <SearchStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
-    </SearchStack.Navigator>
-  );
-}
-
-function ProfileStackScreen() {
-  return (
-    <ProfileStack.Navigator
-      screenOptions={{
-        ...defaultStackOptions,
-        headerBackTitle: 'Profile', // Set back button label
-      }}
-    >
-      <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
-      <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
-      <ProfileStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
-    </ProfileStack.Navigator>
-  );
-}
-
 export default function MainNavigator() {
   const { user } = useContext(AuthContext);
+  const { theme } = useTheme();
+  const currentTheme = themes[theme];
+
+  const navigationTheme = {
+    dark: theme === 'dark',
+    colors: {
+      background: currentTheme.background,
+      card: currentTheme.card,
+      text: currentTheme.text,
+      border: currentTheme.subtext,
+      primary: currentTheme.accent,
+      notification: currentTheme.accent,
+    },
+    fonts: {
+      regular: { fontFamily: undefined, fontWeight: 'normal' }, // <-- tämä estää virheen!
+      medium: { fontFamily: undefined, fontWeight: 'normal' },
+      light: { fontFamily: undefined, fontWeight: 'normal' },
+      thin: { fontFamily: undefined, fontWeight: 'normal' },
+    },  
+  };
+
+  const defaultStackOptions = {
+    headerStyle: {
+      backgroundColor: currentTheme.card,
+      elevation: 0,
+      shadowOpacity: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: currentTheme.subtext,
+    },
+    headerTitleStyle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: currentTheme.text,
+    },
+    headerBackTitleVisible: false,
+    headerTintColor: currentTheme.accent,
+  };
+
+  function DiscoverStackScreen() {
+    return (
+      <DiscoverStack.Navigator screenOptions={{ ...defaultStackOptions }}>
+        <DiscoverStack.Screen name="DiscoverMain" component={DiscoverScreen} options={{ headerShown: false }} />
+        <DiscoverStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
+      </DiscoverStack.Navigator>
+    );
+  }
+
+  function SearchStackScreen() {
+    return (
+      <SearchStack.Navigator screenOptions={{ ...defaultStackOptions }}>
+        <SearchStack.Screen name="SearchMain" component={SearchScreen} options={{ headerShown: false }} />
+        <SearchStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
+      </SearchStack.Navigator>
+    );
+  }
+
+  function ProfileStackScreen() {
+    return (
+      <ProfileStack.Navigator screenOptions={{ ...defaultStackOptions }}>
+        <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
+        <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
+        <ProfileStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
+      </ProfileStack.Navigator>
+    );
+  }
 
   if (user === undefined) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#ff6b6b" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: currentTheme.background }}>
+        <ActivityIndicator size="large" color={currentTheme.accent} />
       </View>
     );
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       {user ? (
         <Tab.Navigator
           screenOptions={({ route }) => ({
@@ -106,12 +112,12 @@ export default function MainNavigator() {
                 return <Feather name="user" size={24} color={color} />;
               }
             },
-            tabBarActiveTintColor: '#ff6b6b',
-            tabBarInactiveTintColor: '#666',
+            tabBarActiveTintColor: currentTheme.accent,
+            tabBarInactiveTintColor: currentTheme.subtext,
             tabBarStyle: {
-              backgroundColor: '#fff',
+              backgroundColor: currentTheme.card,
               borderTopWidth: 1,
-              borderTopColor: '#f1f1f1',
+              borderTopColor: currentTheme.subtext,
               paddingBottom: 8,
               paddingTop: 8,
               height: 60,
