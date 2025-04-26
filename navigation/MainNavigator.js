@@ -11,6 +11,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SearchScreen from '../screens/SearchScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 import { AuthContext } from '../hooks/useAuth';
 
 const Tab = createBottomTabNavigator();
@@ -74,6 +75,7 @@ function ProfileStackScreen() {
       }}
     >
       <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
       <ProfileStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
     </ProfileStack.Navigator>
   );

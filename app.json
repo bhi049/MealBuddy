@@ -14,7 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.MealBuddy"
+      "bundleIdentifier": "com.anonymous.MealBuddy",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Tämä sovellus tarvitsee pääsyn kuviisi avatarkuvan valitsemiseksi."
+      }
     },
     "android": {
       "adaptiveIcon": {
