@@ -19,13 +19,16 @@ const ProfileScreen = ({ navigation }) => {
     username: '',
     bio: '',
     avatar_url: null,
+    birthdate: '',
+    favorite_food: '',
+    email: '',
   });
 
   const fetchProfile = async () => {
     if (!user?.id) return;
     const { data, error } = await supabase
       .from('profiles')
-      .select('full_name, username, bio, avatar_url')
+      .select('full_name, username, bio, avatar_url, birthdate, favorite_food, email')
       .eq('id', user.id)
       .single();
     if (data) setProfile(data);
@@ -62,7 +65,13 @@ const ProfileScreen = ({ navigation }) => {
           {profile.bio ? (
             <Text style={[styles.bioText, { color: currentTheme.subtext }]}>{profile.bio}</Text>
           ) : null}
-          <TouchableOpacity style={styles.editButtonSmall} onPress={() => navigation.navigate('EditProfile')}>
+          {profile.birthdate ? (
+            <Text style={[styles.extraInfo, { color: currentTheme.subtext }]}>🎂 {profile.birthdate}</Text>
+          ) : null}
+          {profile.favorite_food ? (
+            <Text style={[styles.extraInfo, { color: currentTheme.subtext }]}>🍽️ Favorite: {profile.favorite_food}</Text>
+          ) : null}
+          <TouchableOpacity style={[styles.editButtonSmall, { backgroundColor: currentTheme.accent }]} onPress={() => navigation.navigate('EditProfile')}>
             <Text style={styles.editButtonTextSmall}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -114,10 +123,9 @@ const ProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa' },
+  container: { flex: 1 },
 
   profileCardRow: {
-    backgroundColor: '#fff',
     margin: 16,
     padding: 20,
     borderRadius: 12,
@@ -150,21 +158,21 @@ const styles = StyleSheet.create({
   fullName: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#2d3436',
   },
   usernameText: {
     fontSize: 14,
-    color: '#888',
     marginTop: 4,
   },
   bioText: {
     fontSize: 14,
-    color: '#555',
     marginTop: 8,
+  },
+  extraInfo: {
+    fontSize: 13,
+    marginTop: 4,
   },
   editButtonSmall: {
     marginTop: 12,
-    backgroundColor: '#ff6b6b',
     paddingVertical: 6,
     paddingHorizontal: 16,
     borderRadius: 20,
@@ -179,7 +187,6 @@ const styles = StyleSheet.create({
   savedRecipesSection: {
     marginHorizontal: 16,
     marginTop: 16,
-    backgroundColor: '#fff',
     padding: 16,
     borderRadius: 12,
     shadowColor: '#000',
@@ -191,13 +198,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#2d3436',
     marginBottom: 12,
   },
   recipeList: { paddingBottom: 16 },
   recipeCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     borderRadius: 12,
     marginBottom: 12,
     overflow: 'hidden',
@@ -205,17 +210,16 @@ const styles = StyleSheet.create({
   },
   recipeImage: { width: 80, height: 80, backgroundColor: '#f1f1f1' },
   recipeInfo: { flex: 1, padding: 12, justifyContent: 'center' },
-  recipeName: { fontSize: 16, fontWeight: '600', color: '#2d3436' },
-  recipeCategory: { fontSize: 13, color: '#666' },
+  recipeName: { fontSize: 16, fontWeight: '600' },
+  recipeCategory: { fontSize: 13 },
   removeButton: { padding: 12, justifyContent: 'center' },
 
   emptyState: { alignItems: 'center', padding: 40 },
-  emptyText: { fontSize: 16, color: '#999', marginTop: 16 },
+  emptyText: { fontSize: 16, marginTop: 16 },
 
   logoutButton: {
     marginTop: 24,
     marginHorizontal: 16,
-    backgroundColor: '#ffeaea',
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
@@ -225,7 +229,6 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ff6b6b',
     marginLeft: 8,
   },
 });
