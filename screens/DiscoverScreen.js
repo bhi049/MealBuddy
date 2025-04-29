@@ -79,18 +79,21 @@ const DiscoverScreen = ({ navigation }) => {
                 <View style={styles.cardHeader}>
                   <Text style={[styles.title, { color: currentTheme.text }]}>{item.strMeal}</Text>
                   <TouchableOpacity 
-                    style={[
-                      styles.saveBtn,
-                      isMealSaved(item.idMeal) && { backgroundColor: currentTheme.accent },
-                    ]} 
+                    style={{
+                      padding: 8,
+                      borderRadius: 20,
+                      backgroundColor: isMealSaved(item.idMeal)
+                        ? currentTheme.accent
+                        : currentTheme.inputBackground,
+                    }}
                     onPress={(e) => {
                       e.stopPropagation();
                       handleSaveMeal(item);
                     }}
                   >
                     <Feather 
-                      name="heart" 
-                      size={20} 
+                      name="heart"
+                      size={20}
                       color={isMealSaved(item.idMeal) ? '#fff' : currentTheme.accent}
                     />
                   </TouchableOpacity>

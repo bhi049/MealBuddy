@@ -38,7 +38,7 @@ export default function MainNavigator() {
       notification: currentTheme.accent,
     },
     fonts: {
-      regular: { fontFamily: undefined, fontWeight: 'normal' }, // <-- tämä estää virheen!
+      regular: { fontFamily: undefined, fontWeight: 'normal' }, 
       medium: { fontFamily: undefined, fontWeight: 'normal' },
       light: { fontFamily: undefined, fontWeight: 'normal' },
       thin: { fontFamily: undefined, fontWeight: 'normal' },

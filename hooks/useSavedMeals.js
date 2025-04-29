@@ -19,7 +19,7 @@ export const SavedMealsProvider = ({ children }) => {
         .eq('id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // Table might be empty
+      if (error && error.code !== 'PGRST116') { 
         console.error('Error fetching saved meals:', error);
       } else {
         setSavedMeals(data?.saved_meals || []);

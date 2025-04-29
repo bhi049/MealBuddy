@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, TextInput, FlatList, TouchableOpacity, Text, StyleSheet, Image, Keyboard } from 'react-native';
+import {
+  View,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Image,
+  Keyboard,
+} from 'react-native';
 import { SavedMealsContext } from '../hooks/useSavedMeals';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
@@ -22,14 +31,18 @@ const SearchScreen = () => {
         setMeals([]);
         return;
       }
+
       try {
-        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+        const response = await fetch(
+          `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`
+        );
         const data = await response.json();
         setMeals(data.meals || []);
       } catch (error) {
         console.error('Fetch error:', error);
       }
     };
+
     fetchMeals();
   }, [query]);
 
@@ -66,16 +79,22 @@ const SearchScreen = () => {
           </Text>
         </View>
         <TouchableOpacity
-          style={[
-            styles.favoriteButton,
-            isFavorite(item.idMeal) && styles.favoriteButtonActive,
-          ]}
-          onPress={() => toggleFavorite(item)}
+          style={{
+            padding: 8,
+            borderRadius: 20,
+            backgroundColor: isFavorite(item.idMeal)
+              ? currentTheme.accent
+              : currentTheme.inputBackground,
+          }}
+          onPress={(e) => {
+            e.stopPropagation();
+            toggleFavorite(item);
+          }}
         >
           <Feather
             name="heart"
             size={20}
-            color={isFavorite(item.idMeal) ? "#fff" : "#ff6b6b"}
+            color={isFavorite(item.idMeal) ? '#fff' : currentTheme.accent}
           />
         </TouchableOpacity>
       </View>
@@ -83,7 +102,10 @@ const SearchScreen = () => {
   );
 
   const renderRecentSearch = ({ item }) => (
-    <TouchableOpacity style={[styles.recentSearchItem, { backgroundColor: currentTheme.surface }]} onPress={() => setQuery(item)}>
+    <TouchableOpacity
+      style={[styles.recentSearchItem, { backgroundColor: currentTheme.surface }]}
+      onPress={() => setQuery(item)}
+    >
       <Feather name="clock" size={16} color={currentTheme.subtext} style={{ marginRight: 8 }} />
       <Text style={[styles.recentSearchText, { color: currentTheme.text }]}>{item}</Text>
     </TouchableOpacity>
@@ -92,7 +114,14 @@ const SearchScreen = () => {
   return (
     <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <TextInput
-        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border }]}
+        style={[
+          styles.input,
+          {
+            backgroundColor: currentTheme.surface,
+            color: currentTheme.text,
+            borderColor: currentTheme.border,
+          },
+        ]}
         placeholder="Search recipes..."
         value={query}
         onChangeText={setQuery}
@@ -178,14 +207,6 @@ const styles = StyleSheet.create({
   },
   category: {
     fontSize: 13,
-  },
-  favoriteButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: '#fff5f5',
-  },
-  favoriteButtonActive: {
-    backgroundColor: '#ff6b6b',
   },
   recentTitle: {
     fontSize: 16,

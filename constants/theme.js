@@ -7,8 +7,9 @@ const lightTheme = {
     accent: '#ff6b6b',
     inputBackground: '#ffffff',
 
-    surface: '#ffffff',  // sama kuin card
-    border: '#e0e0e0',   // rajaviiva
+    // Navigation
+    surface: '#ffffff',  
+    border: '#e0e0e0',   
     primary: '#ff6b6b',
   };
   
@@ -21,7 +22,8 @@ const lightTheme = {
     accent: '#ff6b6b',
     inputBackground: '#2c2c2c',
 
-    surface: '#1e1e1e', // sama kuin card
+    // Navigation
+    surface: '#1e1e1e', 
     border: '#333333',
     primary: '#ff6b6b'
   };
