@@ -1,8 +1,8 @@
-# MealBuddy
-
 <p align="center">
-  <img src="assets/MealBuddy-logo.png" alt="MealBuddy Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/MealBuddy-logo%202.png" alt="MealBuddy Logo" width="300"/>
 </p>
+
+---
 
 MealBuddy is a mobile application designed to help users discover, save, and manage recipes. It is ideal for food enthusiasts who want to explore new recipes, organize their favorite meals, and personalize their culinary experience. The app provides a seamless experience with features like recipe discovery, meal saving, and user profile customization.
 
