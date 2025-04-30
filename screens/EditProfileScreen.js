@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
 import { Feather } from '@expo/vector-icons';
 import { supabase } from '../supabase';
@@ -8,7 +9,7 @@ import { useTheme } from '../hooks/useTheme';
 import { themes } from '../constants/theme';
 
 const EditProfileScreen = ({ navigation }) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const currentTheme = themes[theme];
 
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -18,6 +19,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [birthdate, setBirthdate] = useState('');
   const [favoriteFood, setFavoriteFood] = useState('');
   const [email, setEmail] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -85,8 +87,20 @@ const EditProfileScreen = ({ navigation }) => {
     }
   };
 
+  const removeAvatar = async () => {
+    setAvatarUrl(null);
+  };
+
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const updateProfile = async () => {
     if (!userId) return;
+    if (email && !validateEmail(email)) {
+      Alert.alert('Invalid email', 'Please enter a valid email address.');
+      return;
+    }
 
     setSaving(true);
     const updates = {
@@ -123,21 +137,22 @@ const EditProfileScreen = ({ navigation }) => {
         )}
       </TouchableOpacity>
 
-      {/* Toggle Dark Mode */}
-      <TouchableOpacity onPress={toggleTheme} style={[styles.themeToggle, { borderColor: currentTheme.border }]}>
-        <Feather name="moon" size={18} color={currentTheme.text} />
-        <Text style={[styles.themeToggleText, { color: currentTheme.text }]}>Toggle Dark Mode</Text>
-      </TouchableOpacity>
+      {avatarUrl && (
+        <TouchableOpacity onPress={removeAvatar} style={styles.removePhotoButton}>
+          <Feather name="x" size={16} color={currentTheme.accent} />
+          <Text style={[styles.removePhotoText, { color: currentTheme.accent }]}>Remove Photo</Text>
+        </TouchableOpacity>
+      )}
 
       <TextInput
-        style={[styles.input, inputStyle(currentTheme)]}
+        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border }]}
         placeholder="Full Name"
         value={fullName}
         onChangeText={setFullName}
         placeholderTextColor={currentTheme.subtext}
       />
       <TextInput
-        style={[styles.input, inputStyle(currentTheme)]}
+        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border }]}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
@@ -145,30 +160,45 @@ const EditProfileScreen = ({ navigation }) => {
         placeholderTextColor={currentTheme.subtext}
       />
       <TextInput
-        style={[styles.input, inputStyle(currentTheme)]}
+        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border, height: 80, textAlignVertical: 'top' }]}
         placeholder="Bio"
         value={bio}
-        onChangeText={setBio}
+        onChangeText={(text) => text.length <= 200 && setBio(text)}
         multiline
         numberOfLines={3}
         placeholderTextColor={currentTheme.subtext}
       />
+      <Text style={[styles.charCount, { color: currentTheme.subtext }]}>{bio.length}/200 characters</Text>
+
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.input, { backgroundColor: currentTheme.surface, borderColor: currentTheme.border }]}>
+        <Text style={{ color: birthdate ? currentTheme.text : currentTheme.subtext }}>
+          {birthdate || 'Select Birthdate'}
+        </Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={birthdate ? new Date(birthdate) : new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              const iso = selectedDate.toISOString().split('T')[0];
+              setBirthdate(iso);
+            }
+          }}
+        />
+      )}
+
       <TextInput
-        style={[styles.input, inputStyle(currentTheme)]}
-        placeholder="Birthdate (YYYY-MM-DD)"
-        value={birthdate}
-        onChangeText={setBirthdate}
-        placeholderTextColor={currentTheme.subtext}
-      />
-      <TextInput
-        style={[styles.input, inputStyle(currentTheme)]}
+        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border }]}
         placeholder="Favorite Food"
         value={favoriteFood}
         onChangeText={setFavoriteFood}
         placeholderTextColor={currentTheme.subtext}
       />
       <TextInput
-        style={[styles.input, inputStyle(currentTheme)]}
+        style={[styles.input, { backgroundColor: currentTheme.surface, color: currentTheme.text, borderColor: currentTheme.border }]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -192,12 +222,6 @@ const EditProfileScreen = ({ navigation }) => {
   );
 };
 
-const inputStyle = (theme) => ({
-  backgroundColor: theme.surface,
-  color: theme.text,
-  borderColor: theme.border,
-});
-
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24 },
   avatar: {
@@ -205,7 +229,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   avatarPlaceholder: {
     width: 120,
@@ -215,19 +239,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   avatarPlaceholderText: {
     fontSize: 12,
     marginTop: 4,
   },
+  removePhotoButton: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  removePhotoText: {
+    marginLeft: 6,
+    fontSize: 14,
+    fontWeight: '500',
+  },
   input: {
     borderWidth: 1,
+    borderRadius: 8,
     marginBottom: 16,
     fontSize: 16,
     paddingVertical: 10,
-    borderRadius: 8,
     paddingHorizontal: 12,
+  },
+  charCount: {
+    alignSelf: 'flex-end',
+    marginBottom: 8,
+    fontSize: 12,
   },
   saveButton: {
     marginTop: 12,
@@ -238,20 +278,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
-  },
-  themeToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 20,
-    padding: 10,
-    borderRadius: 24,
-    borderWidth: 1,
-  },
-  themeToggleText: {
-    fontSize: 14,
-    marginLeft: 8,
     fontWeight: '600',
   },
 });

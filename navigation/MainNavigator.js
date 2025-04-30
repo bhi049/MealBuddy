@@ -12,6 +12,7 @@ import LoginScreen from '../screens/LoginScreen';
 import SearchScreen from '../screens/SearchScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import AccountSettingsScreen from '../screens/AccountSettingsScreen';
 import { AuthContext } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
 import { themes } from '../constants/theme';
@@ -38,11 +39,11 @@ export default function MainNavigator() {
       notification: currentTheme.accent,
     },
     fonts: {
-      regular: { fontFamily: undefined, fontWeight: 'normal' }, 
+      regular: { fontFamily: undefined, fontWeight: 'normal' },
       medium: { fontFamily: undefined, fontWeight: 'normal' },
       light: { fontFamily: undefined, fontWeight: 'normal' },
       thin: { fontFamily: undefined, fontWeight: 'normal' },
-    },  
+    },
   };
 
   const defaultStackOptions = {
@@ -85,6 +86,7 @@ export default function MainNavigator() {
       <ProfileStack.Navigator screenOptions={{ ...defaultStackOptions }}>
         <ProfileStack.Screen name="ProfileMain" component={ProfileScreen} options={{ headerShown: false }} />
         <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
+        <ProfileStack.Screen name="AccountSettings" component={AccountSettingsScreen} options={{ title: 'Account Settings' }} />
         <ProfileStack.Screen name="MealDetail" component={MealDetailScreen} options={{ headerShown: true }} />
       </ProfileStack.Navigator>
     );

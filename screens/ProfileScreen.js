@@ -1,3 +1,4 @@
+// screens/ProfileScreen.js
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -57,8 +58,17 @@ const ProfileScreen = ({ navigation }) => {
             </View>
           )}
         </TouchableOpacity>
+
         <View style={styles.profileInfoContainer}>
-          <Text style={[styles.fullName, { color: currentTheme.text }]}>{profile.full_name || 'My Kitchen'}</Text>
+          <View style={styles.topRow}>
+            <Text style={[styles.fullName, { color: currentTheme.text }]}>
+              {profile.full_name || 'My Kitchen'}
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('AccountSettings')}>
+              <Feather name="settings" size={20} color={currentTheme.subtext} />
+            </TouchableOpacity>
+          </View>
+
           {profile.username ? (
             <Text style={[styles.usernameText, { color: currentTheme.subtext }]}>@{profile.username}</Text>
           ) : null}
@@ -71,7 +81,10 @@ const ProfileScreen = ({ navigation }) => {
           {profile.favorite_food ? (
             <Text style={[styles.extraInfo, { color: currentTheme.subtext }]}>🍽️ Favorite: {profile.favorite_food}</Text>
           ) : null}
-          <TouchableOpacity style={[styles.editButtonSmall, { backgroundColor: currentTheme.accent }]} onPress={() => navigation.navigate('EditProfile')}>
+          <TouchableOpacity
+            style={[styles.editButtonSmall, { backgroundColor: currentTheme.accent }]}
+            onPress={() => navigation.navigate('EditProfile')}
+          >
             <Text style={styles.editButtonTextSmall}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -114,7 +127,10 @@ const ProfileScreen = ({ navigation }) => {
         )}
       </View>
 
-      <TouchableOpacity style={[styles.logoutButton, { backgroundColor: currentTheme.surface }]} onPress={logout}>
+      <TouchableOpacity
+        style={[styles.logoutButton, { backgroundColor: currentTheme.surface }]}
+        onPress={logout}
+      >
         <Feather name="log-out" size={20} color={currentTheme.accent} />
         <Text style={[styles.logoutText, { color: currentTheme.accent }]}>Logout</Text>
       </TouchableOpacity>
@@ -154,6 +170,11 @@ const styles = StyleSheet.create({
   profileInfoContainer: {
     marginLeft: 16,
     flex: 1,
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   fullName: {
     fontSize: 20,
