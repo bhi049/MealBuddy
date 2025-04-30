@@ -1,4 +1,3 @@
-// screens/ProfileScreen.js
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';

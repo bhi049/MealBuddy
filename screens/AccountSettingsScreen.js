@@ -1,4 +1,3 @@
-// screens/AccountSettingsScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
