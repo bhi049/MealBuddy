@@ -10,9 +10,7 @@ MealBuddy is a mobile application designed to help users discover, save, and man
 
 ## 📸 Screenshots
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/loginpage.png" alt="Login Page" width="250"/>
-</p>
+<p align="center"> <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/loginpage.png" alt="Login Page" width="150"/> <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/discoverpage.png" alt="Discover Page" width="150"/> <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/searchpage.png" alt="Search Page" width="150"/> </p> <p align="center"> <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/mealdetailpage.png" alt="Meal Detail Page" width="150"/> <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/profilepage.png" alt="Profile Page" width="150"/> <img src="https://raw.githubusercontent.com/bhi049/MealBuddy/master/assets/editprofilepage.png" alt="Edit Profile Page" width="150"/> </p>
 
 ---
 
